@@ -1,0 +1,18 @@
+<template name="users">
+  <table class="u-full-width">
+    <thead>
+    <tr>
+      <th>Nick</th>
+      <th>Karma</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each users}}
+      <tr>
+        <td>{{nick}}</td>
+        <td>{{karma}}</td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</template>
