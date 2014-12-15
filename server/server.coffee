@@ -92,11 +92,26 @@ class Philae
     factoid = result
     factoid.user = @doc.handle
     factoid.date = new Date()
-    # @todo: fix regex to exclude "what"
-    if factoid.thing is "what" then return false
+    # @todo: fix regex to exclude "what" and "help"
+    if factoid.thing is "what" or factoid.thing is "help" then return false
     Factoids.upsert {thing: factoid.thing, user: factoid.user}, $set: factoid
     @say "Got it."
     return true
+
+  saySomething: ->
+    if @doc.handle isnt "JamesLefrere" then return false # :-P
+    parser = new MessageParser
+      regex: /^(?:philae(?::| ))(?:say )(.*)$/ig
+      mapping: 1: "message"
+    result = parser.parse @doc
+    if !result then return false
+    @say result.message
+
+  help: ->
+    regex = /^(?:philae(?::| ))(help)$/ig
+    matches = regex.exec @doc.text
+    if !matches then return false
+    @say "Type 'Philae what is x?' or 'Philae x' to hear factoid x. Type 'Philae x is y' to create factoid x. Type 'username++' or 'username--' to set karma. Type 'karma username' to see the karma."
 
   connect: ->
     @client.connect()
