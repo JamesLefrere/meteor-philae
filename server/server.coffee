@@ -63,8 +63,8 @@ class Philae
 
   getFactoid: ->
     parser = new MessageParser
-      regex: /^(?:philae)(?:: | |:)(?:what is |what are |)([^?]*)(?:\??|)$/ig
-      mapping: 1: "thing"
+      regex: /^(?:philae)(?:: | |:)(?:what is )?([^?@]*)(?:\?)?( \@.*)?$/ig
+      mapping: 1: "thing", 2: "user"
     results = parser.parse @doc
     if !results then return false
     factoids = Factoids.find(thing: results.thing).fetch()
@@ -78,6 +78,8 @@ class Philae
         message += "Make of that what you will."
       if factoids.length is 1
         message = "#{factoid.thing} #{factoid.isAre} #{factoid.description}, according to #{factoid.user}."
+
+    if results.user? then message = results.user.slice(2) + ": " + message
     @say message
     return true
 
